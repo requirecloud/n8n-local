@@ -1,6 +1,6 @@
 x-shared: &shared
   restart: unless-stopped
-  image: docker.n8n.io/n8nio/n8n
+  image: docker.n8n.io/n8nio/n8n:1.105.3
   environment:
     DB_TYPE: postgresdb
     DB_POSTGRESDB_HOST: postgres
@@ -26,8 +26,8 @@ x-shared: &shared
       condition: service_healthy
     valkey:
       condition: service_healthy
-    extra_hosts:
-      - host.docker.internal:host-gateway
+  extra_hosts:
+    - host.docker.internal:host-gateway
 
 services:
 
