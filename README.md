@@ -21,7 +21,7 @@ docker compose up --wait
 
 Open https://n8n.docker.so
 
-## Connect to locally running OpenAI in LM Studio
+## Connect to locally running openai/gpt-oss-20b in LM Studio
 
 On the OpenAI credential dialog, use the following info:
 

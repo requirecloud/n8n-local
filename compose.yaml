@@ -26,6 +26,8 @@ x-shared: &shared
       condition: service_healthy
     valkey:
       condition: service_healthy
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
 services:
 
