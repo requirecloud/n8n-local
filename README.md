@@ -5,7 +5,7 @@ Local Docker Compose setup to run n8n
 ## Requirements
 
 - Docker and Docker Compose
-- [Stonehenge](https://github.com/druidfi/stonehenge)
+- [Stonehenge](https://github.com/druidfi/stonehenge) - Uses Traefik as reverse proxy and handles SSL certificates.
 
 ## Usage
 
@@ -27,3 +27,8 @@ On the OpenAI credential dialog, use the following info:
 
 - Base URL: http://host.docker.internal:1234/v1
 - API Key: `whatever`
+
+## Files
+
+A local directory `local-files` shared between the n8n instance and host. In n8n, use the `/files` path to read from
+and write to this directory.
