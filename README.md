@@ -32,3 +32,7 @@ On the OpenAI credential dialog, use the following info:
 
 A local directory `local-files` shared between the n8n instance and host. In n8n, use the `/files` path to read from
 and write to this directory.
+
+# Other information
+
+This was made based on the example from [github.com/n8n-io](https://github.com/n8n-io/n8n-hosting/tree/main/docker-compose/withPostgresAndWorker).
