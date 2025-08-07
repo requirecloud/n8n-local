@@ -1,6 +1,6 @@
 x-shared: &shared
   restart: unless-stopped
-  image: docker.n8n.io/n8nio/n8n:1.105.3
+  image: docker.n8n.io/n8nio/n8n:1.106.0
   environment:
     DB_TYPE: postgresdb
     DB_POSTGRESDB_HOST: postgres
