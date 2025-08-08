@@ -11,11 +11,22 @@ x-shared: &shared
     EXECUTIONS_MODE: queue
     QUEUE_BULL_REDIS_HOST: valkey
     QUEUE_HEALTH_CHECK_ACTIVE: true
+    N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
+    N8N_RUNNERS_ENABLED: true
+    OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS: true
+    N8N_PROXY_HOPS: "1"
     N8N_ENCRYPTION_KEY: ${ENCRYPTION_KEY}
     N8N_HOST: ${SUBDOMAIN}.${DOMAIN_NAME}
     N8N_PORT: 5678
     N8N_PROTOCOL: https
     NODE_ENV: production
+    N8N_EMAIL_MODE: ${N8N_EMAIL_MODE:-}
+    N8N_SMTP_HOST: ${N8N_SMTP_HOST:-}
+    N8N_SMTP_PORT: ${N8N_SMTP_PORT:-}
+    N8N_SMTP_USER: ${N8N_SMTP_USER:-}
+    N8N_SMTP_PASS: ${N8N_SMTP_PASS:-}
+    N8N_SMTP_SENDER: ${N8N_SMTP_SENDER:-}
+    N8N_SMTP_SSL: false
     WEBHOOK_URL: https://${SUBDOMAIN}.${DOMAIN_NAME}/
     GENERIC_TIMEZONE: ${GENERIC_TIMEZONE}
   volumes:
@@ -55,7 +66,7 @@ services:
 
   postgres:
     container_name: ${COMPOSE_PROJECT_NAME}-postgres
-    image: postgres:${POSTGRES_VERSION:-16}
+    image: postgres:${POSTGRES_VERSION:-17}
     restart: always
     environment:
       - POSTGRES_USER
@@ -66,6 +77,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
+      - ./backup:/backup
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 5s

@@ -7,6 +7,13 @@ Local Docker Compose setup to run n8n
 - Docker and Docker Compose
 - [Stonehenge](https://github.com/druidfi/stonehenge) - Uses Traefik as reverse proxy and handles SSL certificates.
 
+## What is included?
+
+- n8n main instance
+- n8n worker instance
+- Postgres database
+- Valkey (opensource Redis alternative)
+
 ## Usage
 
 Prepare configuration:
@@ -32,6 +39,22 @@ On the OpenAI credential dialog, use the following info:
 
 A local directory `local-files` shared between the n8n instance and host. In n8n, use the `/files` path to read from
 and write to this directory.
+
+## Upgrading PostgreSQL
+
+Check general instructions on https://blog.oxyconit.com/how-to-update-postgres-16-to-17-in-docker/
+
+Create a backup in an old version:
+
+```console
+docker compose exec -it postgres /bin/bash -c 'pg_dumpall -U $POSTGRES_USER > /backup/dump.sql'
+```
+
+Import the backup in the new version:
+
+```console
+docker compose exec -it postgres /bin/bash -c 'psql -d $POSTGRES_DB -U $POSTGRES_USER < /backup/dump.sql'
+```
 
 # Other information
 
