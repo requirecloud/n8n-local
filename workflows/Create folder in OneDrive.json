@@ -1,0 +1,299 @@
+{
+  "name": "Create folder in OneDrive",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "folder"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        336
+      ],
+      "id": "b656498f-5a1b-4226-a9a4-e3f3825f65ab",
+      "name": "When Executed by Another Workflow",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "paths",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        448,
+        336
+      ],
+      "id": "7edc5c20-f42e-479f-a978-7f6f6e7634b3",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  paths: $input.first().json.folder || \"test/foobar\".split('/').map((folder, index, arr) => ({\n    name: folder,\n    path: `/drive/root:/${arr.slice(0, index + 1).join('/')}`,\n    parentId: null,\n    parent: index === 0 ? \"/drive/root:\" : `/drive/root:/${arr.slice(0, index).join('/')}`\n  }))\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        336
+      ],
+      "id": "471ce2c7-d7be-43fd-b59e-54f2a2e26462",
+      "name": "Paths"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "search",
+        "query": "={{ $json.name }}"
+      },
+      "type": "n8n-nodes-base.microsoftOneDrive",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        352
+      ],
+      "id": "5bf21486-0de5-4f31-a7f8-9d2882bbbf63",
+      "name": "Search",
+      "alwaysOutputData": true,
+      "notesInFlow": false,
+      "credentials": {
+        "microsoftOneDriveOAuth2Api": {
+          "id": "vFXV2LMuV1uM3sI2",
+          "name": "Microsoft Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        896,
+        336
+      ],
+      "id": "6f8dff70-3a9c-4674-9d32-fc34d458c8d8",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "186ba457-5540-46bd-b582-7caf6173cfd1",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "8a0a1ee3-27c7-443b-bf9a-58528bf620d1",
+              "leftValue": "={{ $json.parentReference.path }}",
+              "rightValue": "={{ $('Loop Over Items').item.json.parent }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        352
+      ],
+      "id": "ba5d8bea-3b37-4841-bd23-fa14370d2288",
+      "name": "If",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "create",
+        "name": "={{ $('Split Out').item.json.name }}",
+        "options": {
+          "parentFolderId": "={{ THIS_SHOULD_BE_NULL_OR_PARENT_ID }}"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOneDrive",
+      "typeVersion": 1,
+      "position": [
+        1792,
+        368
+      ],
+      "id": "7188bc6c-3866-44ba-b5f3-50ef679afcef",
+      "name": "Create a folder",
+      "credentials": {
+        "microsoftOneDriveOAuth2Api": {
+          "id": "vFXV2LMuV1uM3sI2",
+          "name": "Microsoft Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst storedIds = item.storage.storedIds || {};\n\nstoredIds[item.path] = item.id;\n\nlet parentForTheNext = null;\nif (item.parent === \"/drive/root:\") {\n  parentForTheNext = item.id;\n} else {\n  parentForTheNext = storedIds[item.parent] || null;\n}\n\nreturn [{\n  json: {\n    ...item,\n    storage: { storedIds }, // carry updated storage forward\n    parentForTheNext\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        -128
+      ],
+      "id": "28f7e366-67a9-4a19-929f-522649318f16",
+      "name": "storeParent",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Initialize storage for folder IDs\nconst storage = { storedIds: {}, initialized: true };\nconst paths = $('Paths').first().json.paths; // Array from your Paths node\n\nreturn paths.map(path => ({\n  json: {\n    ...path,\n    storage\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        336
+      ],
+      "id": "666acc66-ee91-4c01-816e-256d2a91606c",
+      "name": "InitializeStorage"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Paths",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "InitializeStorage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Paths": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "storeParent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a folder": {
+      "main": [
+        []
+      ]
+    },
+    "storeParent": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "InitializeStorage": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fe575f1c-93c9-4905-bbec-6a43306496cc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b8e02da9da087e6be3a37f0784f0160a5508106e3fb771a8529df943289a5ec3"
+  },
+  "id": "bfA4a1LwJVx6G5kB",
+  "tags": []
+}
