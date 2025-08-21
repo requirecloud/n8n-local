@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "config:recommended"
+  ],
+  "baseBranchPatterns": [
+    "main"
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["docker.n8n.io/n8nio/n8n"],
+      "allowedVersions": "/^1\\.107\\./",
+      "rangeStrategy": "replace"
+    }
+  ],
+  "enabled": true
+}
