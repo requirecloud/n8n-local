@@ -28,11 +28,12 @@ docker compose up --wait
 
 Open https://n8n.docker.so
 
-## Connect to locally running openai/gpt-oss-20b in LM Studio
+## Connect to locally running openai/gpt-oss-20b
 
 On the OpenAI credential dialog, use the following info:
 
-- Base URL: http://host.docker.internal:1234/v1
+- Base URL in LM Studio: http://host.docker.internal:1234/v1
+- Base URL in Ollama: http://host.docker.internal:11434/v1
 - API Key: `whatever`
 
 ## Files
