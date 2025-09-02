@@ -32,8 +32,8 @@ Open https://n8n.docker.so
 
 On the OpenAI credential dialog, use the following info:
 
-- Base URL in LM Studio: http://host.docker.internal:1234/v1
-- Base URL in Ollama: http://host.docker.internal:11434/v1
+- Base URL with LM Studio: http://host.docker.internal:1234/v1
+- Base URL with Ollama: http://host.docker.internal:11434/v1
 - API Key: `whatever`
 
 ## Files
