@@ -9,7 +9,7 @@
     {
       "matchDatasources": ["docker"],
       "matchPackageNames": ["docker.n8n.io/n8nio/n8n"],
-      "allowedVersions": "/^1\\.109\\./",
+      "allowedVersions": "/^1\\.111\\./",
       "rangeStrategy": "replace"
     }
   ],
