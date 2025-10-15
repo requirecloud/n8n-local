@@ -36,7 +36,13 @@ On the OpenAI credential dialog, use the following info:
 - Base URL with Ollama: http://host.docker.internal:11434/v1
 - API Key: `whatever`
 
-## Updating to new version
+## Updating to a new version
+
+```console
+make update
+```
+
+This command will do the following operations:
 
 When Docker image tag for n8n updates in `compose.yaml:3` you can update to a new version with:
 
