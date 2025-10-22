@@ -86,7 +86,7 @@ services:
 
   valkey:
     container_name: ${COMPOSE_PROJECT_NAME}-valkey
-    image: valkey/valkey:8-alpine
+    image: valkey/valkey:9-alpine
     restart: always
     volumes:
       - valkey_data:/data
